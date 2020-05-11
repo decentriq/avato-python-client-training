@@ -1,0 +1,66 @@
+syntax = "proto2";
+package training;
+
+message TrainingRequest {
+    oneof training_request {
+        UploadConfigurationRequest uploadConfigurationRequest = 1;
+        GetDataFormatRequest getDataFormatRequest = 2;
+        SubmitDataRequest submitDataRequest = 3;
+        TriggerExecutionRequest triggerExecutionRequest = 4;
+        GetResultsRequest getResultsRequest = 5;
+    }
+}
+
+message TrainingResponse {
+    oneof training_response {
+        string failure = 1;
+        UploadConfigurationResponse uploadConfigurationResponse = 2;
+        GetDataFormatResponse getDataFormatResponse = 3;
+        SubmitDataResponse submitDataResponse = 4;
+        TriggerExecutionResponse triggerExecutionResponse = 5;
+        GetResultsResponse getResultsResponse = 6;
+    }
+}
+
+message DataFormat {
+    repeated string categoriesColumns = 1;
+    required string valueColumn = 2;
+}
+
+message UploadConfigurationRequest {
+    required DataFormat dataFormat = 1;
+    required string ***REMOVED*** = 2;
+}	
+message UploadConfigurationResponse {}	
+
+message GetDataFormatRequest {}	
+message GetDataFormatResponse {
+    required DataFormat dataFormat = 1;
+}	
+
+message SubmitDataRequest {
+    required bytes data = 1;
+}
+message SubmitDataResponse {
+    required int32 ingestedRows = 1;
+    repeated FailedRow failedRows = 2;
+}
+
+message FailedRow {
+    required int32 lineNumber = 1;
+    required string failure = 2;
+}
+
+message TriggerExecutionRequest {
+    required string ***REMOVED*** = 1;
+}
+message TriggerExecutionResponse {}
+
+message GetResultsRequest {}
+message GetResultsResponse {
+    required Result results = 1;
+}
+
+message Result {
+    required string coeffs = 1;
+}
