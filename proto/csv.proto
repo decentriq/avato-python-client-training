@@ -1,8 +1,8 @@
 syntax = "proto2";
-package training;
+package csv;
 
-message TrainingRequest {
-    oneof training_request {
+message CsvRequest {
+    oneof csv_request {
         UploadConfigurationRequest uploadConfigurationRequest = 1;
         GetDataFormatRequest getDataFormatRequest = 2;
         SubmitDataRequest submitDataRequest = 3;
@@ -11,8 +11,8 @@ message TrainingRequest {
     }
 }
 
-message TrainingResponse {
-    oneof training_response {
+message CsvResponse {
+    oneof csv_response {
         string failure = 1;
         UploadConfigurationResponse uploadConfigurationResponse = 2;
         GetDataFormatResponse getDataFormatResponse = 3;
@@ -30,13 +30,13 @@ message DataFormat {
 message UploadConfigurationRequest {
     required DataFormat dataFormat = 1;
     required string ***REMOVED*** = 2;
-}	
-message UploadConfigurationResponse {}	
+}
+message UploadConfigurationResponse {}
 
-message GetDataFormatRequest {}	
+message GetDataFormatRequest {}
 message GetDataFormatResponse {
     required DataFormat dataFormat = 1;
-}	
+}
 
 message SubmitDataRequest {
     required bytes data = 1;
@@ -58,9 +58,5 @@ message TriggerExecutionResponse {}
 
 message GetResultsRequest {}
 message GetResultsResponse {
-    required Result results = 1;
-}
-
-message Result {
-    required string coeffs = 1;
+    required bytes serializedResult = 1;
 }

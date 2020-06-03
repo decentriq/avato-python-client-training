@@ -1,0 +1,11 @@
+syntax = "proto2";
+package logregr;
+
+message LogregrResult {
+    repeated LogregrResultRow logregrResult = 1;
+}
+
+message LogregrResultRow {
+    required string parameterName = 1;
+    required float parameterValue = 2;
+}
