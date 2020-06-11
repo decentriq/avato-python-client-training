@@ -1,4 +1,7 @@
 from avato import Instance
+import re
+import numpy as np
+from avato_training.classifier import LogisticRegressionClassifier
 
 from .proto.csv_pb2 import (
     CsvResponse,
@@ -8,7 +11,6 @@ from .proto.csv_pb2 import (
 from .proto.logregr_pb2 import (
     LogregrResult
 )
-
 
 import pandas as pd
 
@@ -73,7 +75,7 @@ class Training_Instance(Instance):
                 "Expected submit_data response, got "
                 + response.WhichOneof("csv_response")
             )
-        return (response.submitDataResponse.ingestedRows, response.submitDataResponse.failedRows)
+        return response.submitDataResponse.ingestedRows, response.submitDataResponse.failedRows
 
     @Instance._valid_fatquote_required
     def start_execution(self, ***REMOVED***):
@@ -101,8 +103,37 @@ class Training_Instance(Instance):
         serialized_result = response.getResultsResponse.serializedResult
         logregr_result = LogregrResult()
         logregr_result.ParseFromString(bytes(serialized_result))
+        params = self._convert_to_params(logregr_result.logregrResult)
+        clf = LogisticRegressionClassifier(params)
+        return clf
 
-        return { r.parameterName: r.parameterValue for r in logregr_result.logregrResult }
+    def _convert_to_params(self, results):
+
+        def parse_param(p):
+            pattern = 'model \((\S+)\) - param \((\d+),(\d+)\)'
+            match = re.search(pattern, p)
+            class_label, ir, ic = match.group(1,2,3)
+            return class_label, int(ir), int(ic)
+
+        parsed_params = {}
+        for r in results:
+            class_label, ir, ic = parse_param(r.parameterName)
+            parsed_params[(class_label, ir, ic)] = r.parameterValue
+
+        max_ir = max([ir for _, ir,  _ in parsed_params.keys()])
+        max_ic = max([ic for _,  _, ic in parsed_params.keys()])
+        class_labels = list(set(cl for cl,  _, _ in parsed_params.keys()))
+
+        assert max_ir == 0
+
+        params = {}
+        for cl in class_labels:
+            p = []
+            for ic in range(max_ic+1):
+                p.append(parsed_params[(cl, ir, ic)])
+            params[cl] = np.array([p])
+
+        return params
 
     def _send_and_parse_message(self, message):
         response = self._send_message(message)
