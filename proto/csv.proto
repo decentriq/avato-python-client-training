@@ -53,10 +53,13 @@ message FailedRow {
 
 message TriggerExecutionRequest {
     required string ***REMOVED*** = 1;
+    optional bytes serializedExecutionParameters = 2;
 }
 message TriggerExecutionResponse {}
 
-message GetResultsRequest {}
+message GetResultsRequest {
+    optional string ***REMOVED*** = 1;
+}
 message GetResultsResponse {
     required bytes serializedResult = 1;
 }

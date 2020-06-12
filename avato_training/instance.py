@@ -9,7 +9,8 @@ from .proto.csv_pb2 import (
 )
 
 from .proto.logregr_pb2 import (
-    LogregrResult
+    LogregrResult,
+    LogregrStartExecutionParameters
 )
 
 import pandas as pd
@@ -78,9 +79,20 @@ class Training_Instance(Instance):
         return response.submitDataResponse.ingestedRows, response.submitDataResponse.failedRows
 
     @Instance._valid_fatquote_required
-    def start_execution(self, ***REMOVED***):
+    def start_execution(self, ***REMOVED***, hyperparameters=None):
         request = CsvRequest()
         request.triggerExecutionRequest.***REMOVED*** = ***REMOVED***
+        if hyperparameters:
+            message = LogregrStartExecutionParameters()
+            # TODO: Can this be solved more elegantly?
+            message.learning_rate = hyperparameters["learning_rate"]
+            message.num_splits = hyperparameters["num_splits"]
+            message.num_epochs = hyperparameters["num_epochs"]
+            message.l2_penalty = hyperparameters["l2_penalty"]
+            message.l1_penalty = hyperparameters["l1_penalty"]
+            serialized = message.SerializeToString()
+            request.triggerExecutionRequest.serializedExecutionParameters = serialized
+
         response = self._send_and_parse_message(request)
         if not response.HasField("triggerExecutionResponse"):
             raise Exception(
@@ -90,9 +102,9 @@ class Training_Instance(Instance):
 
     @Instance._secret_required
     @Instance._valid_fatquote_required
-    def get_results(self):
+    def get_results(self, ***REMOVED***):
         request = CsvRequest()
-        request.getResultsRequest.SetInParent()
+        request.getResultsRequest.***REMOVED*** = ***REMOVED***
         response = self._send_and_parse_message(request)
         if not response.HasField("getResultsResponse"):
             raise Exception(
@@ -104,8 +116,10 @@ class Training_Instance(Instance):
         logregr_result = LogregrResult()
         logregr_result.ParseFromString(bytes(serialized_result))
         params = self._convert_to_params(logregr_result.logregrResult)
-        clf = LogisticRegressionClassifier(params)
-        return clf
+        classifier = LogisticRegressionClassifier(params)
+        metadata = { r.key: r.value for r in logregr_result.logregrMetadata }
+
+        return classifier,  metadata
 
     def _convert_to_params(self, results):
 
