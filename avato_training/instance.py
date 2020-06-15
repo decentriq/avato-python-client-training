@@ -15,11 +15,13 @@ from .proto.logregr_pb2 import (
 
 import pandas as pd
 
+
 class Configuration:
-    def __init__(self, categories_columns, value_column, ***REMOVED***):
-        self.categories_columns = categories_columns
-        self.value_column = value_column
+    def __init__(self, feature_columns, label_column, ***REMOVED***):
+        self.feature_columns = feature_columns
+        self.label_column = label_column
         self.***REMOVED*** = ***REMOVED***
+
 
 class Training_Instance(Instance):
     @classmethod
@@ -29,16 +31,16 @@ class Training_Instance(Instance):
     @Instance._secret_required
     @Instance._valid_fatquote_required
     def upload_configuration(self, configuration):
-        for category_name in configuration.categories_columns:
-            if "|" in category_name:
+        for feature_name in configuration.feature_columns:
+            if "|" in feature_name:
                 raise Exception(
-                    "category name must not include pipe character (|) got "
-                    + category_name
+                    "feature name must not include pipe character (|) got "
+                    + feature_name
                 )
         request = CsvRequest()
         request.uploadConfigurationRequest.***REMOVED*** = configuration.***REMOVED***
-        request.uploadConfigurationRequest.dataFormat.categoriesColumns[:] = configuration.categories_columns
-        request.uploadConfigurationRequest.dataFormat.valueColumn = configuration.value_column
+        request.uploadConfigurationRequest.dataFormat.categoriesColumns[:] = configuration.feature_columns
+        request.uploadConfigurationRequest.dataFormat.valueColumn = configuration.label_column
         response = self._send_and_parse_message(request)
         if not response.HasField("uploadConfigurationResponse"):
             raise Exception(
@@ -84,7 +86,6 @@ class Training_Instance(Instance):
         request.triggerExecutionRequest.***REMOVED*** = ***REMOVED***
         if hyperparameters:
             message = LogregrStartExecutionParameters()
-            # TODO: Can this be solved more elegantly?
             message.learning_rate = hyperparameters["learning_rate"]
             message.num_splits = hyperparameters["num_splits"]
             message.num_epochs = hyperparameters["num_epochs"]
@@ -121,12 +122,13 @@ class Training_Instance(Instance):
 
         return classifier,  metadata
 
+    """Converts from a list of k,v pairs to a 'dict from class_label to np.array' representation."""
     def _convert_to_params(self, results):
 
         def parse_param(p):
             pattern = 'model \((\S+)\) - param \((\d+),(\d+)\)'
             match = re.search(pattern, p)
-            class_label, ir, ic = match.group(1,2,3)
+            class_label, ir, ic = match.group(1, 2, 3)
             return class_label, int(ir), int(ic)
 
         parsed_params = {}
@@ -137,14 +139,13 @@ class Training_Instance(Instance):
         max_ir = max([ir for _, ir,  _ in parsed_params.keys()])
         max_ic = max([ic for _,  _, ic in parsed_params.keys()])
         class_labels = list(set(cl for cl,  _, _ in parsed_params.keys()))
-
         assert max_ir == 0
 
         params = {}
         for cl in class_labels:
             p = []
             for ic in range(max_ic+1):
-                p.append(parsed_params[(cl, ir, ic)])
+                p.append(parsed_params[(cl, max_ir, ic)])
             params[cl] = np.array([p])
 
         return params
