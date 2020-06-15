@@ -7,6 +7,7 @@ class LogisticRegressionClassifier():
         self.params = params
 
     def sigmoid(self, a):
+        a = max(-100, min(100, a))  # bound exponential to avoid overflow
         return 1/(1 + np.exp(-a))
 
     def predict_single_class(self, x, class_label):
