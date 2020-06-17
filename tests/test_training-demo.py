@@ -39,9 +39,6 @@ def test_complete():
     dataowner1_file = "./examples/test-data/wine-dataowner1.csv"
     dataowner2_file = "./examples/test-data/wine-dataowner2.csv"
 
-    backend_host = "localhost" 
-    backend_port = 3000 
-
 
     # ### ANALYST USER
     # #### Create new instance
@@ -53,9 +50,7 @@ def test_complete():
     analyst_client = Client(
         username=analyst_username,
         ***REMOVED***=analyst_***REMOVED***,
-        instance_types=[Training_Instance],
-        backend_host=backend_host,
-        backend_port=backend_port
+        instance_types=[Training_Instance]
     )
 
     # Spin up an instance. Set who can participate in the instance.
@@ -134,9 +129,7 @@ def test_complete():
         dataowner_client = Client(
             username=dataowner_username,
             ***REMOVED***=dataowner_***REMOVED***,
-            instance_types=[Training_Instance],
-            backend_host=backend_host,
-            backend_port=backend_port
+            instance_types=[Training_Instance]
         )
 
         # Connect to instance (using ID from the analyst user)
