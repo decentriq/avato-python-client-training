@@ -79,7 +79,6 @@ def test_complete():
 
 
     analyst_instance.validate_fatquote(
-        expected_measurement=expected_measurement,
         accept_debug=True,
         accept_group_out_of_date=True
     )
@@ -137,7 +136,6 @@ def test_complete():
 
         # Check security guarantees.
         dataowner_instance.validate_fatquote(
-            expected_measurement=expected_measurement,
             accept_debug=True,
             accept_group_out_of_date=True
         )
