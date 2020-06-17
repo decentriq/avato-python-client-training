@@ -19,6 +19,9 @@ def test_complete():
     from avato_training import Training_Instance, Configuration
     import numpy as np
 
+    tests_root = os.path.dirname(__file__)
+    fixtures_dir = os.path.join(tests_root, "../examples/test-data")
+
     analyst_username = "***REMOVED***"
     analyst_***REMOVED*** = "***REMOVED***"
 
@@ -36,8 +39,8 @@ def test_complete():
     label_column = "quality"
 
     # The datafiles uploaded by the 
-    dataowner1_file = "./examples/test-data/wine-dataowner1.csv"
-    dataowner2_file = "./examples/test-data/wine-dataowner2.csv"
+    dataowner1_file = os.path.join(fixtures_dir, "wine-dataowner1.csv")
+    dataowner2_file = os.path.join(fixtures_dir, "wine-dataowner2.csv")
 
 
     # ### ANALYST USER
