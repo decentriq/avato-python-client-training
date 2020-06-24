@@ -1,0 +1,25 @@
+syntax = "proto2";
+package logregr;
+
+message LogregrResult {
+    repeated LogregrResultRow logregrResult = 1;
+    repeated LogregrMetadataRow logregrMetadata = 2;
+}
+
+message LogregrResultRow {
+    required string parameterName = 1;
+    required float parameterValue = 2;
+}
+
+message LogregrMetadataRow {
+    required string key = 1;
+    required string value = 2;
+}
+
+message LogregrStartExecutionParameters {
+    required float learning_rate = 1;
+    required uint32 num_splits = 2;
+    required uint32 num_epochs = 3;
+    required float l2_penalty = 4;
+    required float l1_penalty = 5;
+}
