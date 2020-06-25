@@ -1,7 +1,9 @@
 # avato-training
+Python client library for Training instance of the Avato platform.
 
 ## Prerequisites
 You need to have Python >=3.7 installed (check using `python --version`) and internet access.
+
 ## Installation
 
 Execute the following steps in the `avato-python-client-training` folder.
@@ -15,4 +17,30 @@ Execute the following steps in the `avato-python-client-training` folder.
 ## Run Demo
 Make sure you have the correct Python environment activated. If you just installed the module, it's already set. Otherwise you may have to run `source .env/bin/activate` again.
 
-To run the demo, install jupyter using `.env/bin/pip install jupyter` and start a notebook server with `.env/bin/jupyter notebook` which should open a browser window. In the browser window, open the examples/training-demo.ipynb notebook and run the cells!
+Set the trial user credentials via
+
+```bash
+export ANALYST_ID="***REMOVED***"
+export ANALYST_PASSWORD="***REMOVED***"
+export DATAOWNER1_ID="***REMOVED***"
+export DATAOWNER1_PASSWORD="***REMOVED***"
+export DATAOWNER2_ID="***REMOVED***"
+export DATAOWNER2_PASSWORD="***REMOVED***"
+```
+
+To run the demo start a notebook server with `.env/bin/jupyter notebook` which should open a browser window. 
+
+In the browser window, open the `examples/training-demo-all-in-one.ipynb` notebook to perform a **full demonstration** in one go.
+
+Alternatively, for a **simple yet fully realistic** simulation execute:
+
+* `examples/training-demo-data-owner-1-simple.ipynb`
+* `examples/training-demo-data-owner-2-simple.ipynb`
+* `examples/training-demo-analyst-simple.ipynb`
+
+Or, if you prefer a **more detailed perspective**, you can try:
+
+* `examples/training-demo-data-owner-1.ipynb`
+* `examples/training-demo-data-owner-2.ipynb`
+* `examples/training-demo-analyst.ipynb`
+

@@ -22,14 +22,14 @@ def test_complete():
     tests_root = os.path.dirname(__file__)
     fixtures_dir = os.path.join(tests_root, "../examples/test-data")
 
-    analyst_username = "***REMOVED***"
-    analyst_***REMOVED*** = "***REMOVED***"
+    analyst_username = os.getenv('ANALYST_ID')
+    analyst_***REMOVED*** = os.getenv('ANALYST_PASSWORD')
 
-    dataowner1_username = "***REMOVED***"
-    dataowner1_***REMOVED*** = "***REMOVED***"
+    dataowner1_username = os.getenv('DATAOWNER1_ID')
+    dataowner1_***REMOVED*** = os.getenv('DATAOWNER1_PASSWORD')
 
-    dataowner2_username = "***REMOVED***"
-    dataowner2_***REMOVED*** = "***REMOVED***"
+    dataowner2_username = os.getenv('DATAOWNER2_ID')
+    dataowner2_***REMOVED*** = os.getenv('DATAOWNER2_PASSWORD')
 
     # This is the hash of the code
     expected_measurement = "4ff505f350698c78e8b3b49b8e479146ce3896a06cd9e5109dfec8f393f14025"
