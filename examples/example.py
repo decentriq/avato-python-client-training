@@ -38,12 +38,12 @@ def compute_accuracy(classifier, X, y):
     return accuracy
 
 
-def analyst_set_up_instance(analyst_username, analyst_***REMOVED***, data_owner_usernames, feature_columns, label_column):
+def analyst_set_up_instance(analyst_username, analyst_password, data_owner_usernames, feature_columns, label_column):
 
     # Create client.
     analyst_client = Client(
         username=analyst_username,
-        ***REMOVED***=analyst_***REMOVED***,
+        password=analyst_password,
         instance_types=[Training_Instance],
         backend_host=backend_host,
         backend_port=backend_port
@@ -67,7 +67,7 @@ def analyst_set_up_instance(analyst_username, analyst_***REMOVED***, data_owner_
     configuration = Configuration(
         feature_columns=feature_columns,
         label_column=label_column,
-        ***REMOVED***=analyst_***REMOVED***
+        password=analyst_password
     )
 
     print("\nConfigured instance with feature columns \n{}\n and label column \n{}".format(
@@ -86,12 +86,12 @@ def analyst_set_up_instance(analyst_username, analyst_***REMOVED***, data_owner_
 
 
 # This function submits for a given data owner a data file to the instance.
-def data_owner_submit_data(dataowner_username, dataowner_***REMOVED***, instance_id, data_file):
+def data_owner_submit_data(dataowner_username, dataowner_password, instance_id, data_file):
 
     # Create client
     data_owner_client = Client(
         username=dataowner_username,
-        ***REMOVED***=dataowner_***REMOVED***,
+        password=dataowner_password,
         instance_types=[Training_Instance],
         backend_host=backend_host,
         backend_port=backend_port

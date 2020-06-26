@@ -20,12 +20,12 @@ Make sure you have the correct Python environment activated. If you just install
 Set the trial user credentials via
 
 ```bash
-export ANALYST_ID="***REMOVED***"
-export ANALYST_PASSWORD="***REMOVED***"
-export DATAOWNER1_ID="***REMOVED***"
-export DATAOWNER1_PASSWORD="***REMOVED***"
-export DATAOWNER2_ID="***REMOVED***"
-export DATAOWNER2_PASSWORD="***REMOVED***"
+export ANALYST_ID="user_1@gmail.com"
+export ANALYST_PASSWORD="password"
+export DATAOWNER1_ID="user_2@gmail.com"
+export DATAOWNER1_PASSWORD="password"
+export DATAOWNER2_ID="user_3@gmail.com"
+export DATAOWNER2_PASSWORD="password"
 ```
 
 To run the demo start a notebook server with `.env/bin/jupyter notebook` which should open a browser window. 
