@@ -7,10 +7,10 @@ import time
 
 data_filenames = ("test-data/wine-dataowner1.csv", "test-data/wine-dataowner2.csv")
 
-expected_measurement = "4ff505f350698c78e8b3b49b8e479146ce3896a06cd9e5109dfec8f393f14025"
+expected_measurement = "8e6c77bd904826526918a7e8fd4ccdc35cb8f8b5e0241fc78749e80dedf00cdf"
 
-backend_host = "localhost"
-backend_port = 3000
+backend_host = "avato.uksouth.cloudapp.azure.com"
+backend_port = 15005
 
 
 def load_data():
