@@ -29,7 +29,7 @@ message DataFormat {
 
 message UploadConfigurationRequest {
     required DataFormat dataFormat = 1;
-    required string ***REMOVED*** = 2;
+    required string password = 2;
 }
 message UploadConfigurationResponse {}
 
@@ -52,13 +52,13 @@ message FailedRow {
 }
 
 message TriggerExecutionRequest {
-    required string ***REMOVED*** = 1;
+    required string password = 1;
     optional bytes serializedExecutionParameters = 2;
 }
 message TriggerExecutionResponse {}
 
 message GetResultsRequest {
-    optional string ***REMOVED*** = 1;
+    optional string password = 1;
 }
 message GetResultsResponse {
     required bytes serializedResult = 1;

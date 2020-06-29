@@ -17,10 +17,10 @@ import pandas as pd
 
 
 class Configuration:
-    def __init__(self, feature_columns, label_column, ***REMOVED***):
+    def __init__(self, feature_columns, label_column, password):
         self.feature_columns = feature_columns
         self.label_column = label_column
-        self.***REMOVED*** = ***REMOVED***
+        self.password = password
 
 
 class Training_Instance(Instance):
@@ -38,7 +38,7 @@ class Training_Instance(Instance):
                     + feature_name
                 )
         request = CsvRequest()
-        request.uploadConfigurationRequest.***REMOVED*** = configuration.***REMOVED***
+        request.uploadConfigurationRequest.password = configuration.password
         request.uploadConfigurationRequest.dataFormat.categoriesColumns[:] = configuration.feature_columns
         request.uploadConfigurationRequest.dataFormat.valueColumn = configuration.label_column
         response = self._send_and_parse_message(request)
@@ -81,9 +81,9 @@ class Training_Instance(Instance):
         return response.submitDataResponse.ingestedRows, response.submitDataResponse.failedRows
 
     @Instance._valid_fatquote_required
-    def start_execution(self, ***REMOVED***, hyperparameters=None):
+    def start_execution(self, password, hyperparameters=None):
         request = CsvRequest()
-        request.triggerExecutionRequest.***REMOVED*** = ***REMOVED***
+        request.triggerExecutionRequest.password = password
         if hyperparameters:
             message = LogregrStartExecutionParameters()
             message.learning_rate = hyperparameters["learning_rate"]
@@ -103,9 +103,9 @@ class Training_Instance(Instance):
 
     @Instance._secret_required
     @Instance._valid_fatquote_required
-    def get_results(self, ***REMOVED***):
+    def get_results(self, password):
         request = CsvRequest()
-        request.getResultsRequest.***REMOVED*** = ***REMOVED***
+        request.getResultsRequest.password = password
         response = self._send_and_parse_message(request)
         if not response.HasField("getResultsResponse"):
             raise Exception(

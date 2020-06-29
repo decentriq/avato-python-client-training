@@ -22,17 +22,17 @@ def test_complete():
     tests_root = os.path.dirname(__file__)
     fixtures_dir = os.path.join(tests_root, "../examples/test-data")
 
-    analyst_username = "***REMOVED***"
-    analyst_***REMOVED*** = "***REMOVED***"
+    analyst_username = os.getenv('ANALYST_ID')
+    analyst_password = os.getenv('ANALYST_PASSWORD')
 
-    dataowner1_username = "***REMOVED***"
-    dataowner1_***REMOVED*** = "***REMOVED***"
+    dataowner1_username = os.getenv('DATAOWNER1_ID')
+    dataowner1_password = os.getenv('DATAOWNER1_PASSWORD')
 
-    dataowner2_username = "***REMOVED***"
-    dataowner2_***REMOVED*** = "***REMOVED***"
+    dataowner2_username = os.getenv('DATAOWNER2_ID')
+    dataowner2_password = os.getenv('DATAOWNER2_PASSWORD')
 
     # This is the hash of the code
-    expected_measurement = "4ff505f350698c78e8b3b49b8e479146ce3896a06cd9e5109dfec8f393f14025"
+    expected_measurement = "8e6c77bd904826526918a7e8fd4ccdc35cb8f8b5e0241fc78749e80dedf00cdf"
 
     # How the analyst expects the data to be formatted
     feature_columns = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', 'chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol']
@@ -42,6 +42,9 @@ def test_complete():
     dataowner1_file = os.path.join(fixtures_dir, "wine-dataowner1.csv")
     dataowner2_file = os.path.join(fixtures_dir, "wine-dataowner2.csv")
 
+	# This points to the confidential computing system
+    backend_host = "avato.uksouth.cloudapp.azure.com" 
+    backend_port = 15005
 
     # ### ANALYST USER
     # #### Create new instance
@@ -52,8 +55,10 @@ def test_complete():
     # Create client.
     analyst_client = Client(
         username=analyst_username,
-        ***REMOVED***=analyst_***REMOVED***,
-        instance_types=[Training_Instance]
+        password=analyst_password,
+        instance_types=[Training_Instance],
+        backend_host=backend_host,
+        backend_port=backend_port
     )
 
     # Spin up an instance. Set who can participate in the instance.
@@ -108,7 +113,7 @@ def test_complete():
     configuration = Configuration(
         feature_columns=feature_columns,
         label_column=label_column,
-        ***REMOVED***=analyst_***REMOVED*** # the ***REMOVED*** to execute
+        password=analyst_password # the password to execute
     )
 
     # Create and set public-private keypair for secure communication.
@@ -125,13 +130,15 @@ def test_complete():
 
 
     # This function submits for a given dataowner a data file to the instance.
-    def dataowner_submit_data(dataowner_username, dataowner_***REMOVED***, instance_id, data_file):
+    def dataowner_submit_data(dataowner_username, dataowner_password, instance_id, data_file):
 
         # Create client
         dataowner_client = Client(
             username=dataowner_username,
-            ***REMOVED***=dataowner_***REMOVED***,
-            instance_types=[Training_Instance]
+            password=dataowner_password,
+            instance_types=[Training_Instance],
+            backend_host=backend_host,
+            backend_port=backend_port
         )
 
         # Connect to instance (using ID from the analyst user)
@@ -171,7 +178,7 @@ def test_complete():
 
     dataowner1_instance = dataowner_submit_data(
         dataowner1_username, 
-        dataowner1_***REMOVED***, 
+        dataowner1_password, 
         analyst_instance.id, 
         data_file=dataowner1_file
     )
@@ -184,7 +191,7 @@ def test_complete():
 
     dataowner2_instance = dataowner_submit_data(
         dataowner2_username, 
-        dataowner2_***REMOVED***, 
+        dataowner2_password, 
         analyst_instance.id, 
         dataowner2_file
     )
@@ -204,9 +211,9 @@ def test_complete():
         "l1_penalty": 0.0,
     }
 
-    analyst_instance.start_execution(analyst_***REMOVED***, hyperparameters)
+    analyst_instance.start_execution(analyst_password, hyperparameters)
 
-    classifier, metadata = analyst_instance.get_results(analyst_***REMOVED***)
+    classifier, metadata = analyst_instance.get_results(analyst_password)
     print("metadata: {}".format(json.dumps(metadata, indent=2)))
 
 
@@ -223,9 +230,9 @@ def test_complete():
         "l1_penalty": 0.0,
     }
 
-    analyst_instance.start_execution(analyst_***REMOVED***, hyperparameters)
+    analyst_instance.start_execution(analyst_password, hyperparameters)
 
-    classifier, metadata = analyst_instance.get_results(analyst_***REMOVED***)
+    classifier, metadata = analyst_instance.get_results(analyst_password)
     print("metadata: {}".format(json.dumps(metadata, indent=2)))
 
 

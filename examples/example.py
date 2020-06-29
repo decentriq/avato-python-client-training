@@ -7,13 +7,10 @@ import time
 
 data_filenames = ("test-data/wine-dataowner1.csv", "test-data/wine-dataowner2.csv")
 
-analyst_credentials = ("***REMOVED***", "***REMOVED***")
-dataowner1_credentials = ("***REMOVED***", "***REMOVED***")
-dataowner2_credentials = ("***REMOVED***", "***REMOVED***")
+expected_measurement = "8e6c77bd904826526918a7e8fd4ccdc35cb8f8b5e0241fc78749e80dedf00cdf"
 
-expected_measurement = "4ff505f350698c78e8b3b49b8e479146ce3896a06cd9e5109dfec8f393f14025"
-backend_host = "localhost"
-backend_port = 3000
+backend_host = "avato.uksouth.cloudapp.azure.com"
+backend_port = 15005
 
 
 def load_data():
@@ -41,12 +38,12 @@ def compute_accuracy(classifier, X, y):
     return accuracy
 
 
-def analyst_set_up_instance(analyst_username, analyst_***REMOVED***, data_owner_usernames, feature_columns, label_column):
+def analyst_set_up_instance(analyst_username, analyst_password, data_owner_usernames, feature_columns, label_column):
 
     # Create client.
     analyst_client = Client(
         username=analyst_username,
-        ***REMOVED***=analyst_***REMOVED***,
+        password=analyst_password,
         instance_types=[Training_Instance],
         backend_host=backend_host,
         backend_port=backend_port
@@ -70,7 +67,7 @@ def analyst_set_up_instance(analyst_username, analyst_***REMOVED***, data_owner_
     configuration = Configuration(
         feature_columns=feature_columns,
         label_column=label_column,
-        ***REMOVED***=analyst_***REMOVED***
+        password=analyst_password
     )
 
     print("\nConfigured instance with feature columns \n{}\n and label column \n{}".format(
@@ -89,12 +86,12 @@ def analyst_set_up_instance(analyst_username, analyst_***REMOVED***, data_owner_
 
 
 # This function submits for a given data owner a data file to the instance.
-def data_owner_submit_data(dataowner_username, dataowner_***REMOVED***, instance_id, data_file):
+def data_owner_submit_data(dataowner_username, dataowner_password, instance_id, data_file):
 
     # Create client
     data_owner_client = Client(
         username=dataowner_username,
-        ***REMOVED***=dataowner_***REMOVED***,
+        password=dataowner_password,
         instance_types=[Training_Instance],
         backend_host=backend_host,
         backend_port=backend_port
