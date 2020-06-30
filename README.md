@@ -37,10 +37,3 @@ Alternatively, for a **simple yet fully realistic** simulation execute:
 * `examples/training-demo-data-owner-1-simple.ipynb`
 * `examples/training-demo-data-owner-2-simple.ipynb`
 * `examples/training-demo-analyst-simple.ipynb`
-
-Or, if you prefer a **more detailed perspective**, you can try:
-
-* `examples/training-demo-data-owner-1.ipynb`
-* `examples/training-demo-data-owner-2.ipynb`
-* `examples/training-demo-analyst.ipynb`
-
