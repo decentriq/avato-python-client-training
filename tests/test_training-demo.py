@@ -22,17 +22,14 @@ def test_complete():
     tests_root = os.path.dirname(__file__)
     fixtures_dir = os.path.join(tests_root, "../examples/test-data")
 
-    analyst_username = os.getenv('ANALYST_ID')
-    analyst_password = os.getenv('ANALYST_PASSWORD')
+    analyst_api_token = os.getenv('TEST_API_TOKEN_1')
+    analyst_password = "SECRET_PASSWORD"
 
-    dataowner1_username = os.getenv('DATAOWNER1_ID')
-    dataowner1_password = os.getenv('DATAOWNER1_PASSWORD')
+    dataowner1_username = os.getenv('TEST_USER_ID_2')
+    dataowner1_api_token = os.getenv('TEST_API_TOKEN_2')
 
-    dataowner2_username = os.getenv('DATAOWNER2_ID')
-    dataowner2_password = os.getenv('DATAOWNER2_PASSWORD')
-
-    # This is the hash of the code
-    expected_measurement = "8e6c77bd904826526918a7e8fd4ccdc35cb8f8b5e0241fc78749e80dedf00cdf"
+    dataowner2_username = os.getenv('TEST_USER_ID_3')
+    dataowner2_api_token = os.getenv('TEST_API_TOKEN_3')
 
     # How the analyst expects the data to be formatted
     feature_columns = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', 'chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol']
@@ -42,23 +39,10 @@ def test_complete():
     dataowner1_file = os.path.join(fixtures_dir, "wine-dataowner1.csv")
     dataowner2_file = os.path.join(fixtures_dir, "wine-dataowner2.csv")
 
-	# This points to the confidential computing system
-    backend_host = "avato.uksouth.cloudapp.azure.com" 
-    backend_port = 15005
-
-    # ### ANALYST USER
-    # #### Create new instance
-
-    # In[2]:
-
-
     # Create client.
     analyst_client = Client(
-        username=analyst_username,
-        password=analyst_password,
+        api_token=os.environ["TEST_API_TOKEN_1"],
         instance_types=[Training_Instance],
-        backend_host=backend_host,
-        backend_port=backend_port
     )
 
     # Spin up an instance. Set who can participate in the instance.
@@ -130,15 +114,12 @@ def test_complete():
 
 
     # This function submits for a given dataowner a data file to the instance.
-    def dataowner_submit_data(dataowner_username, dataowner_password, instance_id, data_file):
+    def dataowner_submit_data(dataowner_api_token, instance_id, data_file):
 
         # Create client
         dataowner_client = Client(
-            username=dataowner_username,
-            password=dataowner_password,
-            instance_types=[Training_Instance],
-            backend_host=backend_host,
-            backend_port=backend_port
+            api_token=dataowner_api_token,
+            instance_types=[Training_Instance]
         )
 
         # Connect to instance (using ID from the analyst user)
@@ -177,8 +158,7 @@ def test_complete():
 
 
     dataowner1_instance = dataowner_submit_data(
-        dataowner1_username, 
-        dataowner1_password, 
+        dataowner1_api_token, 
         analyst_instance.id, 
         data_file=dataowner1_file
     )
@@ -190,8 +170,7 @@ def test_complete():
 
 
     dataowner2_instance = dataowner_submit_data(
-        dataowner2_username, 
-        dataowner2_password, 
+        dataowner2_api_token, 
         analyst_instance.id, 
         dataowner2_file
     )
@@ -281,5 +260,5 @@ def test_complete():
 
     analyst_instance.shutdown()
     analyst_instance.delete()
-    assert analyst_instance.id not in analyst_client.get_instances()
+    assert analyst_instance.id not in list(map(lambda x: x["id"], analyst_client.get_instances()))
 

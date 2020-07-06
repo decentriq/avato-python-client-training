@@ -80,6 +80,7 @@ class Training_Instance(Instance):
             )
         return response.submitDataResponse.ingestedRows, response.submitDataResponse.failedRows
 
+    @Instance._secret_required
     @Instance._valid_fatquote_required
     def start_execution(self, password, hyperparameters=None):
         request = CsvRequest()
