@@ -1,58 +1,44 @@
-#!/usr/bin/env python
-# coding: utf-8
+import os
+import pandas as pd
+import json
+from avato import Client
+from avato import Secret
+from avato_training import Training_Instance, Configuration
+import numpy as np
 
-# # Training Demo
-# 
-# This notebook demonstrates the use of the Confidential Training tool. It requires the [avato Training API](https://github.com/decentriq/avato-python-client-training) and its dependencies to be installed.  
-# 
-# Note that in a realistic, non-demo use of the Confidential Training tool, one analyst user and multiple dataowner users would upload data from different computers. In this workbook, for simplicity, the workflows of the analyst user and the two dataowner users are all shown together.   
+tests_root = os.path.dirname(__file__)
+fixtures_dir = os.path.join(tests_root, "fixtures")
 
-# ### Import dependencies
+analyst_api_token = os.getenv('TEST_API_TOKEN_1')
+analyst_password = "SECRET_PASSWORD"
 
-# In[1]:
-def test_complete():
-    import os
-    import pandas as pd
-    import json
-    from avato import Client
-    from avato import Secret
-    from avato_training import Training_Instance, Configuration
-    import numpy as np
+dataowner1_username = os.getenv('TEST_USER_ID_2')
+dataowner1_api_token = os.getenv('TEST_API_TOKEN_2')
 
-    tests_root = os.path.dirname(__file__)
-    fixtures_dir = os.path.join(tests_root, "../examples/test-data")
+dataowner2_username = os.getenv('TEST_USER_ID_3')
+dataowner2_api_token = os.getenv('TEST_API_TOKEN_3')
 
-    analyst_api_token = os.getenv('TEST_API_TOKEN_1')
-    analyst_password = "SECRET_PASSWORD"
+# How the analyst expects the data to be formatted
+feature_columns = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', 'chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol']
+label_column = "quality"
 
-    dataowner1_username = os.getenv('TEST_USER_ID_2')
-    dataowner1_api_token = os.getenv('TEST_API_TOKEN_2')
+# The datafiles uploaded by the 
+dataowner1_file = os.path.join(fixtures_dir, "wine-dataowner1.csv")
+dataowner2_file = os.path.join(fixtures_dir, "wine-dataowner2.csv")
 
-    dataowner2_username = os.getenv('TEST_USER_ID_3')
-    dataowner2_api_token = os.getenv('TEST_API_TOKEN_3')
+# Create client.
+analyst_client = Client(
+    api_token=os.environ["TEST_API_TOKEN_1"],
+    instance_types=[Training_Instance],
+)
 
-    # How the analyst expects the data to be formatted
-    feature_columns = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', 'chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol']
-    label_column = "quality"
-
-    # The datafiles uploaded by the 
-    dataowner1_file = os.path.join(fixtures_dir, "wine-dataowner1.csv")
-    dataowner2_file = os.path.join(fixtures_dir, "wine-dataowner2.csv")
-
-    # Create client.
-    analyst_client = Client(
-        api_token=os.environ["TEST_API_TOKEN_1"],
-        instance_types=[Training_Instance],
-    )
-
+def test_training_complete():
     # Spin up an instance. Set who can participate in the instance.
     analyst_instance = analyst_client.create_instance(
         "Training", 
         Training_Instance.type, 
         [dataowner1_username, dataowner2_username]
     )
-    print("Instance ID: {}".format(analyst_instance.id))
-
 
     # #### Check security guarantees
     # Validating the so-called fatquote. This step is crucial for all security guarantees.
@@ -67,9 +53,6 @@ def test_complete():
     #      
     # As we are using a non-production environment, we whitelist the debug and out_of_data flags.
 
-    # In[3]:
-
-
     analyst_instance.validate_fatquote(
         accept_debug=True,
         accept_group_out_of_date=True
@@ -81,18 +64,8 @@ def test_complete():
     # * using `*_snv` we can verify if all security patches have been deployed to the infrastructure
     # * using `mrenclave` we can attest to the exact program being executed on the remote machine
 
-    # In[4]:
-
-
-    # Uncomment to inspect 
-    # print(analyst_instance.quote)
-
 
     # #### Configure instance
-
-    # In[5]:
-
-
     # Set the configuration
     configuration = Configuration(
         feature_columns=feature_columns,
@@ -109,10 +82,6 @@ def test_complete():
 
 
     # ### DATAOWNERS
-
-    # In[6]:
-
-
     # This function submits for a given dataowner a data file to the instance.
     def dataowner_submit_data(dataowner_api_token, instance_id, data_file):
 
@@ -154,9 +123,6 @@ def test_complete():
 
     # #### dataowner 1 - Submit data
 
-    # In[7]:
-
-
     dataowner1_instance = dataowner_submit_data(
         dataowner1_api_token, 
         analyst_instance.id, 
@@ -165,9 +131,6 @@ def test_complete():
 
 
     # #### dataowner 2 - Submit Data
-
-    # In[8]:
-
 
     dataowner2_instance = dataowner_submit_data(
         dataowner2_api_token, 
@@ -178,9 +141,6 @@ def test_complete():
 
     # ### ANALYST
     # #### Train with first set of hyperparameters
-
-    # In[9]:
-
 
     hyperparameters = {
         "learning_rate": 0.1,
@@ -193,13 +153,8 @@ def test_complete():
     analyst_instance.start_execution(analyst_password, hyperparameters)
 
     classifier, metadata = analyst_instance.get_results(analyst_password)
-    print("metadata: {}".format(json.dumps(metadata, indent=2)))
-
 
     # #### Train with second set of hyperparameters
-
-    # In[10]:
-
 
     hyperparameters = {
         "learning_rate": 1.0,
@@ -212,13 +167,8 @@ def test_complete():
     analyst_instance.start_execution(analyst_password, hyperparameters)
 
     classifier, metadata = analyst_instance.get_results(analyst_password)
-    print("metadata: {}".format(json.dumps(metadata, indent=2)))
-
 
     # #### Use classifier, compute accuracy on full dataset, compare with metadata results
-
-    # In[11]:
-
 
     def load_data():
         Xy = np.array(
@@ -247,18 +197,8 @@ def test_complete():
     X, y = load_data()
     accuracy = compute_accuracy(classifier, X, y)
 
-    print("Some predictions of the classifier: {}".format(classifier.predict(X[0:2, :])))
-    print("Accuracy of the enclave classifier on the full dataset (as returned through the metadata object): {}".format(metadata["Fullset Accuracy"]))
-    print("Accuracy of the local classifier on the full dataset: {}".format(accuracy))
-
-
-
     # ### ANALYST USER - Clean Up
-
-    # In[12]:
-
 
     analyst_instance.shutdown()
     analyst_instance.delete()
     assert analyst_instance.id not in list(map(lambda x: x["id"], analyst_client.get_instances()))
-
