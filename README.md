@@ -21,26 +21,3 @@ Execute the following steps in the `avato-python-client-training` folder.
 2. Activate the environment using
 `source .env/bin/activate`
 3. Install dependencies using `.env/bin/pip install .`
-
-## Run Demo
-Make sure you have the correct Python environment activated. If you just installed the module, it's already set. Otherwise you may have to run `source .env/bin/activate` again.
-
-Set the trial user credentials via
-
-```bash
-export TEST_API_TOKEN_1="SECRET_TOKEN"
-export TEST_API_TOKEN_2="SECRET_TOKEN2"
-export TEST_API_TOKEN_3="SECRET_TOKEN3"
-export TEST_USER_ID_2="user_2@gmail.com"
-export TEST_USER_ID_3="user_3@gmail.com"
-```
-
-To run the demo start a notebook server with `.env/bin/jupyter notebook` which should open a browser window. 
-
-In the browser window, open the `examples/training-demo-all-in-one.ipynb` notebook to perform a **full demonstration** in one go.
-
-Alternatively, for a **simple yet fully realistic** simulation execute:
-
-* `examples/training-demo-data-owner-1-simple.ipynb`
-* `examples/training-demo-data-owner-2-simple.ipynb`
-* `examples/training-demo-analyst-simple.ipynb`
