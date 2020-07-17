@@ -1,4 +1,5 @@
 from avato import Instance
+from avato.proto.length_delimited import parse_length_delimited, serialize_length_delimited
 import re
 import numpy as np
 from avato_training.classifier import LogisticRegressionClassifier
@@ -80,6 +81,7 @@ class Training_Instance(Instance):
             )
         return response.submitDataResponse.ingestedRows, response.submitDataResponse.failedRows
 
+    @Instance._secret_required
     @Instance._valid_fatquote_required
     def start_execution(self, password, hyperparameters=None):
         request = CsvRequest()
@@ -91,7 +93,7 @@ class Training_Instance(Instance):
             message.num_epochs = hyperparameters["num_epochs"]
             message.l2_penalty = hyperparameters["l2_penalty"]
             message.l1_penalty = hyperparameters["l1_penalty"]
-            serialized = message.SerializeToString()
+            serialized = serialize_length_delimited(message)
             request.triggerExecutionRequest.serializedExecutionParameters = serialized
 
         response = self._send_and_parse_message(request)
@@ -115,7 +117,7 @@ class Training_Instance(Instance):
 
         serialized_result = response.getResultsResponse.serializedResult
         logregr_result = LogregrResult()
-        logregr_result.ParseFromString(bytes(serialized_result))
+        parse_length_delimited(bytes(serialized_result), logregr_result)
         params = self._convert_to_params(logregr_result.logregrResult)
         classifier = LogisticRegressionClassifier(params)
         metadata = { r.key: r.value for r in logregr_result.logregrMetadata }
@@ -151,9 +153,8 @@ class Training_Instance(Instance):
         return params
 
     def _send_and_parse_message(self, message):
-        response = self._send_message(message)
         csv_response = CsvResponse()
-        csv_response.ParseFromString(bytes(response))
+        response = self._send_message(message, csv_response)
         if csv_response.HasField("failure"):
             raise Exception(csv_response.failure)
         return csv_response

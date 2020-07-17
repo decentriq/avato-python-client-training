@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "avato-training"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python client library for the logistic regression instance of the avato platform"
 authors = ["David Sturzenegger <david.sturzenegger@decentriq.ch>"]
 readme = 'README.md'
@@ -8,8 +8,8 @@ repository = "https://github.com/decentriq/avato-python-client-training"
 homepage = "https://github.com/decentriq/avato-python-client-training"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
-avato = "^0.3.0"
+python = "^3.6"
+avato = "^0.4.0"
 pandas = "^1.0.3"
 jupyter = "^1.0.0"
 
