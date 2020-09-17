@@ -7,9 +7,9 @@ import time
 
 data_filenames = ("test-data/wine-dataowner1.csv", "test-data/wine-dataowner2.csv")
 
-expected_measurement = "8e6c77bd904826526918a7e8fd4ccdc35cb8f8b5e0241fc78749e80dedf00cdf"
+expected_measurement = "71b81c5d4a1879fd75905bd207b079274fdcd095f2ff145d0b560574f5733df3"
 
-backend_host = "avato.uksouth.cloudapp.azure.com"
+backend_host = "api.decentriq.ch"
 backend_port = 15005
 
 
@@ -38,15 +38,15 @@ def compute_accuracy(classifier, X, y):
     return accuracy
 
 
-def analyst_set_up_instance(analyst_username, analyst_password, data_owner_usernames, feature_columns, label_column):
+def analyst_set_up_instance(analyst_api_token, analyst_password, data_owner_usernames, feature_columns, label_column):
 
     # Create client.
     analyst_client = Client(
-        username=analyst_username,
-        password=analyst_password,
+        api_token=analyst_api_token,
         instance_types=[Training_Instance],
         backend_host=backend_host,
-        backend_port=backend_port
+        backend_port=backend_port,
+        use_ssl=True
     )
 
     # Spin up an instance. Set who can participate in the instance.
@@ -86,15 +86,15 @@ def analyst_set_up_instance(analyst_username, analyst_password, data_owner_usern
 
 
 # This function submits for a given data owner a data file to the instance.
-def data_owner_submit_data(dataowner_username, dataowner_password, instance_id, data_file):
+def data_owner_submit_data(dataowner_api_token, instance_id, data_file):
 
     # Create client
     data_owner_client = Client(
-        username=dataowner_username,
-        password=dataowner_password,
+        api_token=dataowner_api_token,
         instance_types=[Training_Instance],
         backend_host=backend_host,
-        backend_port=backend_port
+        backend_port=backend_port,
+        use_ssl=True
     )
 
     # Connect to instance (using ID from the analyst user)
