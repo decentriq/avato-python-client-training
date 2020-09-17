@@ -1,0 +1,3 @@
+avato>=0.5.2
+avato-training>=0.2.0
+jupyter>=1.0
