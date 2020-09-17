@@ -8,7 +8,7 @@ repository = "https://github.com/decentriq/avato-python-client-training"
 homepage = "https://github.com/decentriq/avato-python-client-training"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.1"
 avato = "^0.5.2"
 pandas = "^1.0.3"
 
